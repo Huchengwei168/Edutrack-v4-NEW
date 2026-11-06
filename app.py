@@ -1058,72 +1058,8 @@ def publish_exam(exam_id: str) -> None:
 
 
 def inject_css() -> None:
-    css = r"""
-    <style>
-    :root {
-      --canvas:#f6f7fb; --surface:#fff; --ink:#191b25; --muted:#788092;
-      --line:#e5e7ef; --line-strong:#d8dbe6; --indigo:#5746ed; --indigo-soft:#eef0ff;
-      --violet:#8051ed; --green:#0d9b6c; --red:#e34b55; --amber:#c97808;
-      --shadow:0 8px 24px rgba(27,31,51,.045); --shadow-hover:0 14px 32px rgba(45,40,100,.09);
-    }
-    html, body, [class*="css"] { font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif; }
-    .stApp { color:var(--ink); background:linear-gradient(180deg,#fafbff 0%,var(--canvas) 34rem); }
-    [data-testid="stMainBlockContainer"] { max-width:1640px; padding:2rem 2.1rem 4.5rem; }
-    [data-testid="stSidebar"] { background:#fff; border-right:1px solid var(--line); min-width:248px; }
-    [data-testid="stSidebar"] > div:first-child { padding:1.5rem 1rem 1.25rem; }
-    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p { color:var(--muted); }
-    .brand { color:var(--indigo); font-size:1.42rem; font-weight:820; letter-spacing:-.045em; }
-    .eyebrow { color:#9599a6; font-size:.7rem; font-weight:760; letter-spacing:.14em; text-transform:uppercase; }
-    .page-head { margin:0 0 1.45rem; padding:0 0 1.35rem; border-bottom:1px solid var(--line); }
-    .page-head .crumb { color:#9397a4; font-size:.8rem; letter-spacing:.025em; margin-bottom:.55rem; }
-    .page-head h1 { color:var(--ink); font-size:2.08rem; line-height:1.18; letter-spacing:-.045em; margin:0 0 .48rem; font-weight:790; }
-    .page-head p { max-width:72rem; margin:0; color:var(--muted); font-size:1rem; line-height:1.65; }
-    .login-brand { min-height:68vh; padding:3.2rem 2.4rem 2.3rem .5rem; display:flex; flex-direction:column; justify-content:center; }
-    .login-brand h1 { color:var(--ink); font-size:3.45rem; line-height:1.03; letter-spacing:-.065em; margin:.9rem 0 1.1rem; }
-    .login-brand p { color:#666c7a; font-size:1.1rem; line-height:1.85; max-width:37rem; }
-    .login-points { color:#777d8c; font-size:.94rem; line-height:2.1; margin-top:1.3rem; }
-    .login-stage { position:relative; overflow:hidden; margin-top:2rem; padding:1.55rem 1.55rem 1.7rem; border:1px solid rgba(255,255,255,.9); border-radius:24px; background:rgba(255,255,255,.86); box-shadow:0 24px 70px rgba(59,49,150,.13); backdrop-filter:blur(18px); }
-    .metric { min-height:126px; padding:1.15rem 1.25rem; border:1px solid var(--line); border-radius:18px; background:linear-gradient(145deg,#fff 60%,#f8f7ff); box-shadow:var(--shadow); animation:rise-in .42s both; }
-    .metric .label { color:var(--muted); font-size:.86rem; }
-    .metric .value { margin:.36rem 0 .18rem; color:var(--ink); font-size:1.9rem; font-weight:800; letter-spacing:-.045em; font-variant-numeric:tabular-nums; }
-    .section-title { margin:1.45rem 0 .7rem; color:var(--ink); font-size:1.16rem; font-weight:760; letter-spacing:-.025em; }
-    .note { padding:.9rem 1.05rem; border:1px solid #dddcff; border-radius:14px; color:#4337b4; background:#f3f3ff; }
-    .muted { color:var(--muted); font-size:.86rem; }
-    [data-testid="stVerticalBlockBorderWrapper"] { overflow:hidden; border-color:var(--line) !important; border-radius:17px !important; background:var(--surface); box-shadow:var(--shadow); transition:box-shadow .18s ease,border-color .18s ease,transform .18s ease; }
-    [data-testid="stVerticalBlockBorderWrapper"]:hover { border-color:#d9d5ff !important; box-shadow:var(--shadow-hover); }
-    [data-testid="stDataFrame"], [data-testid="stTable"] { overflow:hidden; border:1px solid var(--line); border-radius:14px; background:#fff; }
-    [data-testid="stExpander"] { overflow:hidden; border:1px solid var(--line); border-radius:14px; background:#fff; }
-    [data-testid="stExpander"] summary { min-height:2.8rem; font-weight:650; }
-    [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea, [data-testid="stNumberInput"] input,
-    [data-testid="stDateInput"] input, [data-baseweb="select"] > div { border-color:var(--line-strong); border-radius:11px; background:#fff; }
-    [data-testid="stTextInput"] input:focus, [data-testid="stTextArea"] textarea:focus, [data-testid="stNumberInput"] input:focus { border-color:var(--indigo); box-shadow:0 0 0 3px rgba(87,70,237,.12); }
-    [data-testid="stButton"] > button, [data-testid="stFormSubmitButton"] > button { min-height:2.7rem; border:1px solid var(--line-strong); border-radius:11px; transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease,background .16s ease; }
-    [data-testid="stButton"] > button:hover, [data-testid="stFormSubmitButton"] > button:hover { transform:translateY(-1px); border-color:#bab4ff; box-shadow:0 6px 16px rgba(87,70,237,.13); }
-    [data-testid="stButton"] > button p, [data-testid="stFormSubmitButton"] > button p { display:block !important; color:var(--ink) !important; opacity:1 !important; font-weight:650 !important; }
-    [data-testid="stButton"] > button[kind="primary"], [data-testid="stFormSubmitButton"] > button[kind="primary"] { border-color:var(--indigo); background:linear-gradient(105deg,#5746ed,#6849e9); box-shadow:0 5px 14px rgba(87,70,237,.18); }
-    [data-testid="stButton"] > button[kind="primary"] p, [data-testid="stFormSubmitButton"] > button[kind="primary"] p { color:#fff !important; }
-    [data-testid="stPlotlyChart"] { padding:.35rem; border:1px solid var(--line); border-radius:15px; background:#fff; }
-    [data-testid="stSidebar"] [role="radiogroup"] { gap:.25rem; }
-    [data-testid="stSidebar"] [role="radiogroup"] label { padding:.35rem .55rem; border-radius:10px; transition:background .15s ease,color .15s ease; }
-    [data-testid="stSidebar"] [role="radiogroup"] label:hover { background:var(--indigo-soft); }
-    [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) { color:var(--indigo); background:var(--indigo-soft); font-weight:700; }
-    [data-testid="stTabs"] [data-baseweb="tab-list"] { gap:.35rem; border-bottom:1px solid var(--line); }
-    [data-testid="stTabs"] button[role="tab"] { border-radius:10px 10px 0 0; font-weight:650; }
-    [data-testid="stTabs"] button[aria-selected="true"] { color:var(--indigo); }
-    .question-number-card { margin:.15rem 0 .3rem; padding:.58rem .2rem; border:1px solid var(--line-strong); border-radius:11px; color:#444957; background:#fff; text-align:center; font-weight:720; transition:all .15s ease; }
-    .question-number-card.selected { border-color:var(--indigo); color:#fff; background:var(--indigo); box-shadow:0 5px 13px rgba(87,70,237,.2); }
-    .question-number-card.wrong { border-color:#f3c6ca; color:var(--red); background:#fff5f5; }
-    .ai-block { padding:1rem 1.1rem; border:1px solid #e3dcff; border-left:4px solid var(--violet); border-radius:14px; background:linear-gradient(140deg,#fcfbff,#f8f6ff); }
-    .status-pill { display:inline-block; padding:.25rem .68rem; border:1px solid var(--line); border-radius:999px; color:#626878; background:#fff; font-size:.79rem; }
-    [data-testid="stAlert"] { border-radius:13px; }
-    hr { border-color:var(--line); }
-    @keyframes rise-in { from { opacity:0; transform:translateY(7px); } to { opacity:1; transform:translateY(0); } }
-    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; } }
-    @media (max-width:1100px) { [data-testid="stMainBlockContainer"] { padding:1.5rem 1.3rem 3.5rem; } [data-testid="stSidebar"] { min-width:220px; } }
-    @media (max-width:760px) { [data-testid="stMainBlockContainer"] { padding:1.1rem .85rem 3rem; } .page-head h1 { font-size:1.75rem; } .login-brand { min-height:auto; padding:1.4rem .25rem; } .login-brand h1 { font-size:2.55rem; } .login-stage { margin-top:.5rem; padding:1rem; } }
-    </style>
-    """
-    st.markdown(css, unsafe_allow_html=True)
+    css = (APP_DIR / "edutrack.css").read_text(encoding="utf-8")
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 
 def render_header(title: str, subtitle: str) -> None:
@@ -1148,6 +1084,7 @@ def metric_row(items: list[tuple[str, str, str]]) -> None:
 def render_teacher_ai_config_card() -> None:
     """Keep API configuration visible on the teacher dashboard."""
     with st.container(border=True):
+        st.markdown('<div class="settings-card-marker" aria-hidden="true"></div>', unsafe_allow_html=True)
         left, right = st.columns([3, 1.15])
         with left:
             st.markdown("### DeepSeek AI 配置")
@@ -1190,26 +1127,57 @@ def render_teacher_ai_config_card() -> None:
                 st.warning("尚未配置")
 
 
+BRAND_MARK = (
+    '<div class="brand"><span class="brand-icon" aria-hidden="true">'
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+    'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'
+    '<path d="M20 4C9 4 4 9 4 20c11 0 16-5 16-16ZM4 20l10-10"/>'
+    '</svg></span>EduTrack</div>'
+)
+
+
 def render_login_page() -> None:
     left, right = st.columns([1.12, 0.88], gap="large")
     with left:
+        # The trail is decorative and never receives pointer or keyboard input.
+        squares = []
+        for index in range(16):
+            progress = index / 15
+            x = 4 + 105 * progress
+            y = 96 - 45 * progress + 10 * progress * (1 - progress)
+            size = 12 + 73 * progress
+            opacity = .08 + .47 * progress
+            rotation = (index * 137.508) % 90 - 45
+            delay = .08 * index
+            squares.append(
+                f'<span class="login-square" style="--x:{x:.2f}%;--y:{y:.2f}%;'
+                f'--size:{size:.1f}px;--opacity:{opacity:.2f};'
+                f'--rotation:{rotation:.1f}deg;--delay:{delay:.2f}s"></span>'
+            )
         st.markdown(
-            """
+            f"""
             <section class="login-brand">
-              <div class="eyebrow">EDUTRACK · LEARNING FEEDBACK</div>
-              <h1>让每次练习<br>都找到下一步。</h1>
+              {BRAND_MARK}
+              <div class="eyebrow">阅卷系统的下游分析层</div>
+              <h1>一步<span>一个脚印</span></h1>
               <p>教师上传真实试卷与成绩，学生查看自己的答题情况，并围绕具体题目获得学习引导。</p>
-              <div class="login-points">01　教师创建考试并核对题目<br>02　成绩与答题卡按学号对应<br>03　学生查看分析、错题与建议</div>
+              <ol class="login-points">
+                <li><span class="login-step" aria-hidden="true">01</span>教师创建考试并核对题目</li>
+                <li><span class="login-step" aria-hidden="true">02</span>成绩与答题卡按学号对应</li>
+                <li><span class="login-step" aria-hidden="true">03</span>学生查看分析、错题与建议</li>
+              </ol>
+              <div class="login-trail" aria-hidden="true">{"".join(squares)}</div>
             </section>
             """,
             unsafe_allow_html=True,
         )
 
     with right:
-        st.markdown('<div class="eyebrow">SECURE WORKSPACE</div>', unsafe_allow_html=True)
-        st.markdown("## 登录或创建账号")
-        st.caption("教师端与学生端使用各自注册的账号。平台不会预置演示学生或成绩。")
         with st.container(border=True):
+            st.markdown('<div class="auth-panel-marker" aria-hidden="true"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="eyebrow">SECURE WORKSPACE</div>', unsafe_allow_html=True)
+            st.markdown("## 登录或创建账号")
+            st.caption("教师端与学生端使用各自注册的账号。平台不会预置演示学生或成绩。")
             student_tab, teacher_tab, register_tab = st.tabs(["学生端登录", "教师端登录", "注册账号"])
 
         def login_panel(tab: Any, role: str, key_prefix: str) -> None:
@@ -1258,7 +1226,11 @@ def render_login_page() -> None:
 
 
 def render_ai_box(exam_id: str, question: dict[str, Any], student_score: float | None = None) -> None:
-    st.markdown('<div class="section-title">AI 题目答疑</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="ai-panel-marker" aria-hidden="true"></div>'
+        '<div class="section-title ai-heading"><span class="ai-icon" aria-hidden="true">✦</span>AI 题目答疑</div>',
+        unsafe_allow_html=True,
+    )
     st.caption("DeepSeek 会着重引导学生；当你明确追问标准答案或选项时，也会在解释思路后直接核对。")
     prompt = st.text_area(
         "输入你的问题或解题思路",
@@ -1300,6 +1272,12 @@ def render_ai_box(exam_id: str, question: dict[str, Any], student_score: float |
     for author, message in st.session_state.get("ai_messages", {}).get(f"{exam_id}:{question['question_no']}", [])[-6:]:
         with st.chat_message("user" if author == "你" else "assistant"):
             st.write(message)
+
+
+def render_ai_result(message: str) -> None:
+    with st.container(border=True):
+        st.markdown('<div class="ai-result-marker" aria-hidden="true"></div>', unsafe_allow_html=True)
+        st.markdown(message)
 
 
 def render_teacher_dashboard() -> None:
@@ -1351,7 +1329,14 @@ def render_teacher_dashboard() -> None:
             for exam in exams
         ]
     )
-    st.dataframe(table, use_container_width=True, hide_index=True)
+    status_styles = {
+        "已发布": "color: #06684a; background-color: #e7f7f0",
+        "已确认": "color: #06684a; background-color: #e7f7f0",
+        "待核对": "color: #8a4900; background-color: #fef4e6",
+        "草稿": "color: #545765; background-color: #f0f0f3",
+    }
+    styled_table = table.style.map(status_styles.get, subset=["状态", "题目核对"])
+    st.dataframe(styled_table, use_container_width=True, hide_index=True)
 
 
 def render_create_exam() -> None:
@@ -2078,8 +2063,7 @@ def render_teacher_intervention() -> None:
             except RuntimeError as exc:
                 st.error(str(exc))
     if st.session_state.get(intervention_ai_key):
-        with st.container(border=True):
-            st.markdown(st.session_state[intervention_ai_key])
+        render_ai_result(st.session_state[intervention_ai_key])
 
     topic_names = topic_df["知识点"].astype(str).tolist()
     selected_topic = st.selectbox("目标知识点", topic_names, key=f"intervention_topic_{exam_id}")
@@ -2412,8 +2396,7 @@ def render_student_report() -> None:
             except RuntimeError as exc:
                 st.error(str(exc))
     if st.session_state.get(report_key):
-        with st.container(border=True):
-            st.markdown(st.session_state[report_key])
+        render_ai_result(st.session_state[report_key])
 
     if not topic_df.empty:
         topic_df = topic_df.sort_values("得分率", ascending=True)
@@ -2676,8 +2659,7 @@ def render_student_profile() -> None:
             except RuntimeError as exc:
                 st.error(str(exc))
     if st.session_state.get(profile_key):
-        with st.container(border=True):
-            st.markdown(st.session_state[profile_key])
+        render_ai_result(st.session_state[profile_key])
     elif not exams:
         st.info("有已发布考试数据后，AI 才能根据真实成绩生成诊断摘要。")
 
@@ -2794,7 +2776,10 @@ def render_student_questions() -> None:
                 button_cols = st.columns(4)
                 for button_col, question in zip(button_cols, visible_questions[start : start + 4]):
                     question_no = question["question_no"]
-                    selected_class = " selected" if question_no == selected_no else ""
+                    if question_no == selected_no:
+                        selected_class = " selected"
+                    else:
+                        selected_class = " wrong" if is_wrong(question) else ""
                     button_col.markdown(
                         f'<div class="question-number-card{selected_class}">第 {question_no} 题</div>',
                         unsafe_allow_html=True,
@@ -2844,7 +2829,8 @@ def render_student_questions() -> None:
         if question.get("analysis"):
             st.markdown('<div class="section-title">题目解析</div>', unsafe_allow_html=True)
             st.write(question["analysis"])
-        render_ai_box(exam_id, question, student_score)
+        with st.container(border=True):
+            render_ai_box(exam_id, question, student_score)
 
     render_student_wrong_book_section(account)
 
@@ -2901,7 +2887,7 @@ def render_student_answer_sheets() -> None:
 
 def sidebar() -> tuple[str, str]:
     role = st.session_state["role"]
-    st.sidebar.markdown('<div class="brand">EduTrack</div><div class="muted">真实上传 · AI 识别 · 学生答疑</div>', unsafe_allow_html=True)
+    st.sidebar.markdown(f'{BRAND_MARK}<div class="muted">真实上传 · AI 识别 · 学生答疑</div>', unsafe_allow_html=True)
     st.sidebar.divider()
     st.sidebar.caption(f"当前账号：{st.session_state['account']} · 角色：{role}")
     st.sidebar.caption("数据库没有预置考试、题目或成绩。")
