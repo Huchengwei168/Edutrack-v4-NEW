@@ -2585,10 +2585,12 @@ def render_student_profile() -> None:
                 profile_topic_df = profile_topic_df.sort_values("得分率").head(8)
                 labels = profile_topic_df["知识点"].astype(str).tolist()
                 values = profile_topic_df["得分率"].astype(float).tolist()
+                axes = [str(index) for index in range(1, len(labels) + 1)]
                 figure = go.Figure(
                     go.Scatterpolar(
                         r=values + values[:1],
-                        theta=labels + labels[:1],
+                        theta=axes + axes[:1],
+                        mode="lines+markers",
                         fill="toself",
                         fillcolor="rgba(87,71,232,.14)",
                         line=dict(color="#5747e8", width=2),
@@ -2597,13 +2599,24 @@ def render_student_profile() -> None:
                 )
                 figure.update_layout(
                     height=320,
-                    margin=dict(l=30, r=30, t=20, b=20),
-                    polar=dict(radialaxis=dict(visible=True, range=[0, 100], ticksuffix="%")),
+                    margin=dict(l=35, r=35, t=35, b=35),
+                    polar=dict(
+                        angularaxis=dict(type="category", tickmode="array", tickvals=axes, ticktext=axes),
+                        radialaxis=dict(autorange=False, range=[0, 100], dtick=25, ticksuffix="%"),
+                    ),
                     showlegend=False,
                     paper_bgcolor="rgba(0,0,0,0)",
                     font=dict(color="#555963"),
                 )
-                st.plotly_chart(figure, use_container_width=True)
+                st.plotly_chart(figure, use_container_width=True, config={"staticPlot": True})
+                topic_items = "".join(
+                    f"<li>{html_escape(label)} · {value:.1f}%</li>"
+                    for label, value in zip(labels, values)
+                )
+                st.markdown(
+                    f'<ol aria-label="知识点得分率" style="overflow-wrap:anywhere">{topic_items}</ol>',
+                    unsafe_allow_html=True,
+                )
             elif not profile_topic_df.empty:
                 st.dataframe(
                     profile_topic_df.sort_values("得分率").assign(得分率=lambda frame: frame["得分率"].map(lambda value: f"{value:.1f}%")),
