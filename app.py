@@ -2929,14 +2929,17 @@ def render_student_answer_sheets() -> None:
         if sheet["mime_type"].startswith("image/"):
             st.image(sheet["data"], use_container_width=True)
         elif sheet["mime_type"] == "application/pdf":
-            if hasattr(st, "pdf"):
+            try:
+                if not hasattr(st, "pdf"):
+                    raise RuntimeError("当前环境不支持 PDF 预览")
                 st.pdf(sheet["data"])
-            else:
+            except Exception:
                 encoded = base64.b64encode(sheet["data"]).decode("ascii")
                 st.markdown(
                     f'<iframe src="data:application/pdf;base64,{encoded}" width="100%" height="720" type="application/pdf"></iframe>',
                     unsafe_allow_html=True,
                 )
+                st.caption("如果浏览器未显示预览，请点击上方“下载答题卡”查看。")
         else:
             st.info("该文件类型暂不支持网页内预览，请点击“下载答题卡”查看。")
 
