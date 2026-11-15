@@ -394,7 +394,7 @@ EXAM_ANALYSIS_PROMPT = """
 
 规则：
 1. 只识别上传内容中真实存在的题目，不能补写、猜测或生成示例题。
-2. 无法确认标准答案、满分、知识点或解析时使用 null 或空字符串，不要猜测。
+2. 根据每题内容主动归纳具体知识点。满分应结合整卷题目及大题说明（如“每题3分”）填写；确实没有分值依据时填 null。无法确认答案或解析时留空。
 3. 保留完整题干和选项；题号必须是整数。
 4. 允许把同一大题下的小题分别列出。
 """.strip()
@@ -1455,6 +1455,49 @@ def render_question_review() -> None:
             "topic": str(st.session_state.get(keys["topic"], question.get("topic") or "")).strip(),
             "analysis": str(st.session_state.get(keys["analysis"], question.get("analysis") or "")).strip(),
         }
+
+    st.subheader("AI 批量识别满分和知识点")
+    source_file = st.file_uploader("补充上传原试卷以识别大题评分说明（可选）", type=["pdf", "docx", "txt", "md", "csv"], key=f"review_source_{selected_id}")
+    st.caption("AI 根据题目归纳知识点，并根据原卷中的评分说明提取满分。结果可修改，点击页面底部的一键保存后生效。")
+    if st.button("一键 AI 识别满分和知识点", key=f"review_metadata_{selected_id}"):
+        if not get_ai_key():
+            st.error("请先在教师工作台配置 DeepSeek API Key。")
+        else:
+            try:
+                source_text = ""
+                if source_file:
+                    _, source_text = extract_exam_upload(source_file)
+                updated = 0
+                with st.spinner("AI 正在识别题目分值与知识点……"):
+                    for start in range(0, len(questions), 10):
+                        batch = questions[start:start + 10]
+                        items = [{"question_number": q["question_no"], **current_question_values(q)} for q in batch]
+                        response = deepseek_chat([
+                            {"role": "system", "content": "你是试卷分析教师。根据题干归纳每题具体知识点。根据原卷明确的单题分值或适用的大题每题分值确定满分；没有依据时 full_score 返回 null，禁止猜测。仅返回 JSON 对象，格式为 {\"questions\":[{\"question_number\":1,\"topic\":\"知识点\",\"full_score\":2}]}。"},
+                            {"role": "user", "content": "原卷评分说明及内容：\n" + source_text[:160000] + "\n待分析题目：\n" + json.dumps(items, ensure_ascii=False)},
+                        ], max_tokens=4000, json_mode=True)
+                        payload = parse_json_response(response)
+                        results = payload.get("questions", []) if isinstance(payload, dict) else []
+                        by_number = {q["question_no"]: q for q in batch}
+                        for item in results:
+                            try:
+                                number = int(item.get("question_number"))
+                                question = by_number[number]
+                                keys = question_widget_keys(number)
+                                values = current_question_values(question)
+                                topic = str(item.get("topic") or "").strip()
+                                if not values["topic"] and topic:
+                                    st.session_state[keys["topic"]] = topic
+                                    updated += 1
+                                score = item.get("full_score")
+                                if values["full_score"] is None and score is not None and 0 < float(score) < 10000:
+                                    st.session_state[keys["full_score"]] = float(score)
+                                    updated += 1
+                            except (KeyError, TypeError, ValueError):
+                                continue
+                st.success(f"已填入 {updated} 项，请核对后点击页面底部一键保存。")
+            except (RuntimeError, ValueError) as exc:
+                st.error(f"识别未完成：{exc}。已填入的内容仍可核对保存。")
 
     def render_question_card(question: dict[str, Any]) -> None:
         question_no = question["question_no"]
